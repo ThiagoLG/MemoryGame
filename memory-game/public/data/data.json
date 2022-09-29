@@ -1,0 +1,39 @@
+{
+    "data": [{
+            "id": 1,
+            "backgroundImage": null,
+            "contentImage": null,
+            "color": "blue"
+        },
+        {
+            "id": 2,
+            "backgroundImage": null,
+            "contentImage": null,
+            "color": "black"
+        },
+        {
+            "id": 3,
+            "backgroundImage": null,
+            "contentImage": null,
+            "color": "orange"
+        },
+        {
+            "id": 4,
+            "backgroundImage": null,
+            "contentImage": null,
+            "color": "green"
+        },
+        {
+            "id": 5,
+            "backgroundImage": null,
+            "contentImage": null,
+            "color": "red"
+        },
+        {
+            "id": 6,
+            "backgroundImage": null,
+            "contentImage": null,
+            "color": "yellow"
+        }
+    ]
+}

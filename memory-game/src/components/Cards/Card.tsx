@@ -2,28 +2,42 @@ import { useState } from "react";
 import { CardItem } from "../../model/card-item";
 import "./Card.scss";
 
-const Card = () => {
+const Card = (cardItem: CardItem) => {
 
   /*--- General Variables and States ---*/
+
   const [flippedCard, setFlipCard] = useState(false);
+
   /*------------------------------------*/
 
+
+
+
   /*--- Functions ---*/
-  let flipCard = () => {
-    console.log(flippedCard);
 
-    setFlipCard(current => !current);
+  /**
+   * Toggle card face
+   * @returns void
+   */
+  let flipCard = () => setFlipCard(current => !current)
 
-    console.log('clicou');
-  }
   /*-----------------*/
+
+
+
 
 
   /*--- Component Render ---*/
   return (
     <div className={'FlipperCard' + (flippedCard ? ' Flipped' : '')} onClick={flipCard}>
-      <div className="Card Front"></div>
-      <div className="Card Rear"></div>
+      <div
+        className="Card Front"
+        style={{ background: cardItem.contentImage }}>
+      </div>
+
+      <div className="Card Rear"
+        style={{ background: cardItem.backgroundImage || cardItem.color }}>
+      </div>
     </div>
   )
 
