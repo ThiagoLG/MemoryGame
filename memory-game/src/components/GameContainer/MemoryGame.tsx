@@ -35,7 +35,7 @@ const MemoryGame = () => {
   /*--- Component Render ---*/
   return (
     <div className="GameContainer">
-      {cardsArray.map((item) => <Card {...item} />)}
+      {cardsArray.map((item) => <Card key={item.id} {...item} />)}
     </div>
   )
 }
