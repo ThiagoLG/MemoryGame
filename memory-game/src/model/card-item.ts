@@ -3,6 +3,7 @@ interface CardItem {
   backgroundImage?: string;
   contentImage?: string;
   color?: string;
+  order?: number;
 }
 
 export type { CardItem };
