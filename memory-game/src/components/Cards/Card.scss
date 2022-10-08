@@ -29,7 +29,7 @@ $zoom-scale-flipped: 1.1;
         transition: $flip-animation-time;
         cursor: pointer;
         &.Front {
-            background: red;
+            background: rgb(255, 255, 255);
             z-index: 2;
         }
         &.Rear {

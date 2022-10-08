@@ -4,6 +4,9 @@ interface CardItem {
   contentImage?: string;
   color?: string;
   order?: number;
+  flipped?: boolean;
+  correct?: boolean;
+  key?: string;
 }
 
 export type { CardItem };
