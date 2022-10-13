@@ -1,57 +1,71 @@
-import React, { useEffect, useReducer, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { CardItem } from "../../model/card-item";
-import './MemoryGame.scss';
-
-import Card from "../Cards/Card";
 import { GameOptionItem } from "../../model/game-option-item";
+import Card from "../Cards/Card";
+import './MemoryGame.scss';
 
 const MemoryGame = () => {
 
   /*--- General Variables and States ---*/
-  const urlCards = './data/data.json';
-  const initialGameOptions: GameOptionItem = {
+  /*- Props -*/
+  const URL_API_CARDS = './data/data.json'; // url to search cards options
+  const CARDS_ID_GAP = 1000; // Gap between cards ID (used to verify pairs)
+  const UNFLIP_CARD_DELAY = 1 * 1000; // 1 second to unflip
+  const INITIAL_GAME_OPTIONS: GameOptionItem = {
     displayOptions: {
       gridColumns: 4,
       gridRows: 4,
       gap: '50px'
     }
   }
-  const CARDS_ID_GAP = 1000;
-  const UNFLIP_CARD_DELAY = 1 * 1000; // 1 second to unflip
 
-  const [cardsArray, setCardsArray] = useState<CardItem[]>([]);
-  const [gameOptions, setOptions] = useState<GameOptionItem>(initialGameOptions);
-
-  let previousSelectedCard: number = null;
-  let previousCardElement: any = null;
-
-  const first = useRef<CardItem | null>(null);
-  const second = useRef<CardItem | null>(null);
-  const unflip = useRef(false);
+  /*- States -*/
+  const [gameOptions, setGameOptions] = useState<GameOptionItem>(INITIAL_GAME_OPTIONS);
+  const [cardsArray, setCardsArray] = useState<CardItem[]>([]); //Array of cards state
   const [matches, setMatches] = useState(0);
   const [moves, setMoves] = useState(0);
 
-
+  /*- Refs -*/
+  const first = useRef<CardItem | null>(null);
+  const second = useRef<CardItem | null>(null);
+  const unflip = useRef(false);
   /*----------------------------*/
 
 
 
   /*--- Functions ---*/
+  /**
+   * Function responsible for getting all cards from the API
+   */
   const getCardsFromApi = async () => {
-    const CARDS_RESULT = await (await fetch(urlCards)).json();
+    // Get all cards from URL_API_CARDS
+    const CARDS_RESULT = await (await fetch(URL_API_CARDS)).json();
+    // Get array from result to const
     const CARDS_ARRAY: CardItem[] = CARDS_RESULT.data;
+    // Clone cards based on original array and increase ID from "CARDS_ID_GAP" const
     let clonedCards: CardItem[] = CARDS_ARRAY.map(c => ({ ...c, id: c.id + CARDS_ID_GAP }));
 
     setCardsArray(shuffleArray([...CARDS_ARRAY, ...clonedCards]));
   }
 
+  /**
+   * Function responsible for shuffle array items to show randomly on the page
+   * @param array Array of cards to shuffle
+   * @returns scrambled array
+   */
   const shuffleArray = (array: CardItem[]) => {
     return array
       .map(item => ({ order: Math.random(), ...item }))
       .sort((a, b) => a.order - b.order)
   }
 
-  const buildTemplateAreas = (cols: number, lines: number) => {
+  /**
+   * Function responsible for build Template Area props to use in container grid style
+   * @param cols Number of columns to build template
+   * @param lines Number of lines to build template
+   * @returns String contains template areas
+   */
+  const buildTemplateAreas = (cols: number, lines: number): string => {
     let gridTemplate = '';
     for (let l = 0; l < lines; l++) {
       let currentCol = '';
@@ -60,52 +74,17 @@ const MemoryGame = () => {
       }
       gridTemplate += `"${currentCol}"`;
     }
+
+    //Alterar a logica acima para utilizar o trecho abaixo:
+    // let template = new Array(lines).fill(new Array(cols).fill('c').join(''));
+    // template.join(' ')
+
     return gridTemplate;
   }
 
   const verifyEqualCards = (first: number, second: number) => {
     if (first < CARDS_ID_GAP) return first === (second - CARDS_ID_GAP);
     else return (first - CARDS_ID_GAP) === second;
-  }
-
-  const clickCard = (cardId: number, cardRef: any) => {
-    console.log('callback');
-
-    let updatedArray: CardItem[] = cardsArray;
-    let isCorrect = previousSelectedCard && verifyEqualCards(previousSelectedCard, cardId);
-
-    updatedArray.forEach(card => {
-      //Set correct flag
-      if (isCorrect && (card.id === previousSelectedCard || card.id === cardId))
-        card.correct = true;
-
-      //Set flip flag
-      if (card.id === cardId && !card.flipped) {
-        card.flipped = true;
-      }
-    });
-
-    //Unflip last cards if incorrect
-    if (!isCorrect && previousSelectedCard) {
-      updatedArray.forEach(card => card.flipped = !!card.correct) //set flipped props
-      setTimeout(() => {
-        console.log('unflip');
-        previousCardElement.current.click();
-        cardRef.current.click();
-        previousCardElement = null;
-      }, UNFLIP_CARD_DELAY);//trigger click on cards to unflip
-    }
-
-    setCardsArray(updatedArray);
-
-    //set last card selected
-    if (!previousSelectedCard) {
-      previousSelectedCard = cardId;
-      previousCardElement = cardRef;
-    }
-    else {
-      previousSelectedCard = null;
-    }
   }
 
   const handleCard = (id: number) => {
@@ -174,15 +153,14 @@ const MemoryGame = () => {
   return (
     <div className="GameContainer"
       style={{
-        gridTemplateAreas: buildTemplateAreas(initialGameOptions.displayOptions.gridColumns, initialGameOptions.displayOptions.gridRows),
-        gap: initialGameOptions.displayOptions.gap
+        gridTemplateAreas: buildTemplateAreas(INITIAL_GAME_OPTIONS.displayOptions.gridColumns, INITIAL_GAME_OPTIONS.displayOptions.gridRows),
+        gap: INITIAL_GAME_OPTIONS.displayOptions.gap
       }}>
       {cardsArray.map((item) =>
         <Card
           key={item.id}
           cardItem={item}
           callbackFunction={handleCard}
-          previousCardId={previousSelectedCard}
         />
       )}
     </div>
